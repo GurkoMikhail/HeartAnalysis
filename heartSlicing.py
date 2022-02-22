@@ -72,8 +72,12 @@ if __name__ == '__main__':
     phantomNames = [
         'efg3_cut',
         'fgr3-osem-nonAC',
-        'fgr3-osem-AC'
+        'fgr3-osem-AC',
+        'efg3cutDefect',
+        'fgr3-osem-nonAC-iscemija',
+        'fgr3-osem-AC-iscemija',
     ]
+    comparisonRowsNumber = 3
     axes = [
         'Short',
         'Vertical',
@@ -120,9 +124,14 @@ if __name__ == '__main__':
                 saveImage(slices, f'Images/Heart/{levelsType}/{phantomName}/{axisName}/{axisName.lower()}', levels=levels)
                 slices /= slices.max()
                 heartImages.append(slices)
-            heartImages = np.concatenate(heartImages, axis=1)
-            saveImage(heartImages, f'Images/Heart/Comparison{levelsType}/{axisName}/{axisName.lower()}', levels=levels)
-            addVis(layout, heartImages, levels, row=i, column=axis)
+            comparisonImage = []
+            for i in range(len(heartImages)//comparisonRowsNumber):
+                i0 = comparisonRowsNumber*i
+                ix = i0 + comparisonRowsNumber
+                comparisonImage.append(np.concatenate(heartImages[i0:ix], axis=1))
+            comparisonImage = np.concatenate(comparisonImage, axis=2)
+            saveImage(comparisonImage, f'Images/Heart/Comparison{levelsType}/{axisName}/{axisName.lower()}', levels=levels)
+            addVis(layout, comparisonImage, levels, row=i, column=axis)
 
     win.show()
     pg.exec()
